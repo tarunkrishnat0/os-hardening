@@ -97,8 +97,10 @@ all:
 
 Checking if all the systems are pingable
 ```sh
+cd os-hardening
+
 # Ping all systems
-ansible all -m ping
+ansible all -m ping -i inventory.yml
 ```
 
 ## Running hardening playbook
