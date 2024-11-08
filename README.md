@@ -68,7 +68,7 @@ sudo gnome-text-editor /usr/lib/python3/dist-packages/apparmor/tools.py
 ansible-playbook -i inventory.yml playbook.yml --ask-become-pass -k
 ```
 
-# Running Audit in the target system
+# [Optional] Running Audit in the target system
 ```sh
 # SSH into the system that you want to audit
 ssh user@ip
@@ -84,3 +84,14 @@ git clone -b benchmark-v2.0.0 https://github.com/tarunkrishnat0/UBUNTU22-CIS-Aud
 cd UBUNTU22-CIS-Audit
 sudo ./run_audit.sh -v vars/CIS.yml -w Workstation
 ```
+
+# Installing ClamAV
+```sh
+sudo apt-get install clamav clamav-daemon -y
+sudo systemctl stop clamav-freshclam
+sudo freshclam
+sudo systemctl start clamav-freshclam
+```
+
+# Setting FIDO key for FDE
+Refer [fido2-luks.md](Post-Ubuntu-Install/fido2-luks.md)
