@@ -47,13 +47,21 @@ sudo apt install -y python3-dev python3-venv python3-virtualenv python3-pip libf
 sudo add-apt-repository --yes --update ppa:ansible/ansible
 sudo apt install ansible
 ```
-### Set ssh to login with keys instead of passwords
+### Set ssh to login with keys instead of prompting for passwords
 
+Generate ssh keys if you dont have one already
 ```sh
-ssh-copy-id target-system-username@target-system-ip
+machine_id=$(cat /etc/machine-id)
+ssh-keygen -t ed25519 -a 200 -C "${USER}@${machine_id}" -f ~/.ssh/id_ed25519
 ```
 
+Copy the ssh key to the target system
+```sh
+ssh-copy-id target-system-username@target-system-ip
 
+# SSH into the target system shouldnt prompt for password
+ssh target-system-username@target-system-ip
+```
 
 # Hardening
 
