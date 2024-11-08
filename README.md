@@ -18,7 +18,32 @@ sudo apt install ansible
 
 # Hardening
 
+## Set ssh to login with keys instead of passwords
+```sh
+ssh-copy-id user@ip
+```
+
+## Update inventory.yml
 Update the inventory.yml file with relevant entries
+```sh
+$ cat inventory.yml
+all:
+  children:
+    clients:
+      hosts:
+        sys11:
+          ansible_user: ubuntu
+          ansible_host: 192.168.10.11
+          ansible_connection: ssh
+        sys12:
+          ansible_user: ubuntu
+          ansible_host: 192.168.10.12
+          ansible_connection: ssh
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    ansible_ssh_key: ADD_SSH_KEY_HERE
+
+```
 
 Checking if all the systems are pingable
 ```sh
@@ -26,8 +51,36 @@ Checking if all the systems are pingable
 ansible all -m ping
 ```
 
+# Temporary Fixes
+
+## Apparmor
+Apparmor has a bug that is resulting in hardening failing. Apply the path as per this [PR](https://gitlab.com/apparmor/apparmor/-/merge_requests/1218/diffs)
+```sh
+sudo apt install apparmor apparmor-utils
+
+# https://gitlab.com/apparmor/apparmor/-/merge_requests/1218/diffs
+sudo gnome-text-editor /usr/lib/python3/dist-packages/apparmor/tools.py
+```
+
 # Running hardening playbook
 
 ```sh
 ansible-playbook -i inventory.yml playbook.yml --ask-become-pass -k
+```
+
+# Running Audit in the target system
+```sh
+# SSH into the system that you want to audit
+ssh user@ip
+
+# Run the below commands in the system that we are auditing
+sudo curl -L https://github.com/goss-org/goss/releases/latest/download/goss-linux-amd64 -o /usr/local/bin/goss
+sudo chmod +rx /usr/local/bin/goss
+
+# Clone the repo
+git clone -b benchmark-v2.0.0 https://github.com/tarunkrishnat0/UBUNTU22-CIS-Audit.git
+
+# Run the audit
+cd UBUNTU22-CIS-Audit
+sudo ./run_audit.sh -v vars/CIS.yml -w Workstation
 ```
