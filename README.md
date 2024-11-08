@@ -1,36 +1,5 @@
-# Intro
-## Target System(System to be hardened)
-### Get Username and IP Address
-
-```sh
-# Get target-system-username
-echo $USER
-
-# Get target-system-ip
-ip a
-```
-### Install dependencies
-```sh
-sudo apt update
-sudo apt dist-upgrade
-
-sudo apt install -y vim git tmux htop iputils-ping rsyslog fontconfig unzip curl nano
-sudo apt install -y python3-dev python3-venv python3-virtualenv python3-pip libffi-dev gcc libssl-dev git net-tools openssh-server jq python3-pip sqlite-utils
-
-sudo service ssh start
-```
-
-### Temporary Fixes: Apparmor
-Apparmor has a bug that is resulting in hardening failure. Apply the patch as per this [PR](https://gitlab.com/apparmor/apparmor/-/merge_requests/1218/diffs)
-```sh
-sudo apt install apparmor apparmor-utils
-
-# https://gitlab.com/apparmor/apparmor/-/merge_requests/1218/diffs
-sudo gnome-text-editor /usr/lib/python3/dist-packages/apparmor/tools.py
-```
-
-## Local System(System with os-hardening repo)
-### Install dependencies
+# [LocalSystem] Step 1: Configure LocalSystem
+## [LocalSystem] Install dependencies
 ```sh
 git clone  --recursive -b dev https://github.com/tarunkrishnat0/os-hardening.git
 
@@ -47,17 +16,49 @@ sudo apt install -y python3-dev python3-venv python3-virtualenv python3-pip libf
 sudo add-apt-repository --yes --update ppa:ansible/ansible
 sudo apt install ansible
 ```
-### Set ssh to login with keys instead of prompting for passwords
-
+### [LocalSystem] Generate SSH Keys
 Generate ssh keys if you dont have one already
 ```sh
 machine_id=$(cat /etc/machine-id)
 ssh-keygen -t ed25519 -a 200 -C "${USER}@${machine_id}" -f ~/.ssh/id_ed25519
 ```
 
-Copy the ssh key to the target system.
+# [TargetSystem] Step 2: Configure all TargetSystems (Systems to be hardened)
+## [TargetSystem] Get Username and IP Address
 
-Note: `target-system-username` and `target-system-ip` are from section [Target System](#get-username-and-ip-address)
+Get the username, IP address for all target systems and update in `hosts` section in [inventory.yml](#update-inventoryyml)
+```sh
+# Get target-system-username
+echo $USER
+
+# Get target-system-ip
+ip a
+```
+## [TargetSystem] Install dependencies
+```sh
+sudo apt update
+sudo apt dist-upgrade
+
+sudo apt install -y vim git tmux htop iputils-ping rsyslog fontconfig unzip curl nano
+sudo apt install -y python3-dev python3-venv python3-virtualenv python3-pip libffi-dev gcc libssl-dev git net-tools openssh-server jq python3-pip sqlite-utils
+
+sudo service ssh start
+```
+
+## [TargetSystem] Temporary Fixes: Apparmor
+Apparmor has a bug that is resulting in hardening failure. Apply the patch as per this [PR](https://gitlab.com/apparmor/apparmor/-/merge_requests/1218/diffs)
+```sh
+sudo apt install apparmor apparmor-utils
+
+# https://gitlab.com/apparmor/apparmor/-/merge_requests/1218/diffs
+sudo gnome-text-editor /usr/lib/python3/dist-packages/apparmor/tools.py
+```
+
+# [LocalSystem] Step 3: Configure ssh access using keys instead of prompting for passwords
+
+For each of the target systems username, IP -- execute the below command from localsystem
+
+Note: `target-system-username` and `target-system-ip` are from `hosts` in [inventory.yml](#update-inventoryyml)
 ```sh
 ssh-copy-id target-system-username@target-system-ip
 
@@ -65,15 +66,9 @@ ssh-copy-id target-system-username@target-system-ip
 ssh target-system-username@target-system-ip
 ```
 
-SSH Public Key
-```sh
-# Copy the string from this command and replace ADD_SSH_PUBLIC_KEY_HERE in inventory.yml
-cat ~/.ssh/id_ed25519.pub
-```
+# [LocalSystem] Step 4: Hardening
 
-# Hardening
-
-## Update inventory.yml
+## [LocalSystem] Update inventory.yml
 Update the inventory.yml file with relevant entries
 ```sh
 $ cat inventory.yml
@@ -95,6 +90,14 @@ all:
 
 ```
 
+### [LocalSystem] SSH PUBLIC KEY
+Copy the SSH Public Key from below command and replace `ADD_SSH_PUBLIC_KEY_HERE` in [inventory.yml](#update-inventoryyml)
+```sh
+# Copy the string from this command and replace ADD_SSH_PUBLIC_KEY_HERE in inventory.yml
+cat ~/.ssh/id_ed25519.pub
+```
+
+## [LocalSystem] Check if all target systems are accessible
 Checking if all the systems are pingable
 ```sh
 cd os-hardening
