@@ -1,4 +1,36 @@
 # Intro
+## Target System(System to be hardened)
+### Get Username and IP Address
+
+```sh
+# Get target-system-username
+echo $USER
+
+# Get target-system-ip
+ip a
+```
+### Install dependencies
+```sh
+sudo apt update
+sudo apt dist-upgrade
+
+sudo apt install -y vim git tmux htop iputils-ping rsyslog fontconfig unzip curl nano
+sudo apt install -y python3-dev python3-venv python3-virtualenv python3-pip libffi-dev gcc libssl-dev git net-tools openssh-server jq python3-pip sqlite-utils
+
+sudo service ssh start
+```
+
+### Temporary Fixes: Apparmor
+Apparmor has a bug that is resulting in hardening failure. Apply the patch as per this [PR](https://gitlab.com/apparmor/apparmor/-/merge_requests/1218/diffs)
+```sh
+sudo apt install apparmor apparmor-utils
+
+# https://gitlab.com/apparmor/apparmor/-/merge_requests/1218/diffs
+sudo gnome-text-editor /usr/lib/python3/dist-packages/apparmor/tools.py
+```
+
+## Local System(System with os-hardening repo)
+### Install dependencies
 ```sh
 git clone  --recursive -b dev https://github.com/tarunkrishnat0/os-hardening.git
 
@@ -15,13 +47,15 @@ sudo apt install -y python3-dev python3-venv python3-virtualenv python3-pip libf
 sudo add-apt-repository --yes --update ppa:ansible/ansible
 sudo apt install ansible
 ```
+### Set ssh to login with keys instead of passwords
+
+```sh
+ssh-copy-id target-system-username@target-system-ip
+```
+
+
 
 # Hardening
-
-## Set ssh to login with keys instead of passwords
-```sh
-ssh-copy-id user@ip
-```
 
 ## Update inventory.yml
 Update the inventory.yml file with relevant entries
@@ -32,8 +66,8 @@ all:
     clients:
       hosts:
         sys11:
-          ansible_user: ubuntu
-          ansible_host: 192.168.10.11
+          ansible_user: target-system-username
+          ansible_host: target-system-ip
           ansible_connection: ssh
         sys12:
           ansible_user: ubuntu
@@ -51,24 +85,13 @@ Checking if all the systems are pingable
 ansible all -m ping
 ```
 
-# Temporary Fixes
-
-## Apparmor
-Apparmor has a bug that is resulting in hardening failing. Apply the path as per this [PR](https://gitlab.com/apparmor/apparmor/-/merge_requests/1218/diffs)
-```sh
-sudo apt install apparmor apparmor-utils
-
-# https://gitlab.com/apparmor/apparmor/-/merge_requests/1218/diffs
-sudo gnome-text-editor /usr/lib/python3/dist-packages/apparmor/tools.py
-```
-
-# Running hardening playbook
+## Running hardening playbook
 
 ```sh
 ansible-playbook -i inventory.yml playbook.yml --ask-become-pass -k
 ```
 
-# [Optional] Running Audit in the target system
+## [Optional] Running Audit in the target system
 ```sh
 # SSH into the system that you want to audit
 ssh user@ip
