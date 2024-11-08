@@ -41,7 +41,7 @@ sudo apt update
 sudo apt dist-upgrade
 
 sudo apt install -y vim git tmux htop iputils-ping rsyslog fontconfig unzip curl nano
-sudo apt install -y python3-dev python3-venv python3-virtualenv python3-pip libffi-dev gcc libssl-dev git net-tools openssh-server jq python3-pip sqlite-utils
+sudo apt install -y python3-dev python3-venv python3-virtualenv python3-pip libffi-dev gcc libssl-dev git net-tools openssh-server jq python3-pip sqlite-utils gedit
 
 sudo service ssh start
 ```
@@ -52,7 +52,7 @@ Apparmor has a bug that is resulting in hardening failure. Apply the patch as pe
 sudo apt install apparmor apparmor-utils
 
 # https://gitlab.com/apparmor/apparmor/-/merge_requests/1218/diffs
-sudo gnome-text-editor /usr/lib/python3/dist-packages/apparmor/tools.py
+sudo gedit /usr/lib/python3/dist-packages/apparmor/tools.py
 ```
 
 # [LocalSystem] Step 3: Configure ssh access using keys instead of prompting for passwords
@@ -68,6 +68,13 @@ ssh target-system-username@target-system-ip
 ```
 
 # [LocalSystem] Step 4: Hardening
+
+### [LocalSystem] SSH PUBLIC KEY
+Copy the SSH Public Key from below command and replace `ADD_SSH_PUBLIC_KEY_HERE` in [inventory.yml](#update-inventoryyml)
+```sh
+# Copy the string from this command and replace ADD_SSH_PUBLIC_KEY_HERE in inventory.yml
+cat ~/.ssh/id_ed25519.pub
+```
 
 ## [LocalSystem] Update inventory.yml
 Update the inventory.yml file with relevant entries
@@ -89,13 +96,6 @@ all:
     ansible_python_interpreter: /usr/bin/python3
     ansible_ssh_key: ADD_SSH_PUBLIC_KEY_HERE
 
-```
-
-### [LocalSystem] SSH PUBLIC KEY
-Copy the SSH Public Key from below command and replace `ADD_SSH_PUBLIC_KEY_HERE` in [inventory.yml](#update-inventoryyml)
-```sh
-# Copy the string from this command and replace ADD_SSH_PUBLIC_KEY_HERE in inventory.yml
-cat ~/.ssh/id_ed25519.pub
 ```
 
 ## [LocalSystem] Check if all target systems are accessible
