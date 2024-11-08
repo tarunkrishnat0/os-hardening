@@ -10,7 +10,10 @@ sudo apt update
 sudo apt dist-upgrade
 
 sudo apt install -y vim git tmux htop iputils-ping rsyslog fontconfig unzip curl nano
-sudo apt install -y python3-dev python3-venv python3-virtualenv python3-pip libffi-dev gcc libssl-dev git net-tools openssh-server
+sudo apt install -y python3-dev python3-venv python3-virtualenv python3-pip libffi-dev gcc libssl-dev git net-tools openssh-server jq python3-pip sqlite-utils
+
+sudo add-apt-repository --yes --update ppa:ansible/ansible
+sudo apt install ansible
 ```
 
 # Hardening
