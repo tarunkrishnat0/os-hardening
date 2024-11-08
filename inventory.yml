@@ -1,0 +1,15 @@
+all:
+  children:
+    clients:
+      hosts:
+        sys11:
+          ansible_user: ubuntu
+          ansible_host: 192.168.10.11
+          ansible_connection: ssh
+        sys12:
+          ansible_user: ubuntu
+          ansible_host: 192.168.10.12
+          ansible_connection: ssh
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    ansible_ssh_key: ADD_UR_SSH_KEY_HERE

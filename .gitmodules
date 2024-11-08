@@ -1,0 +1,8 @@
+[submodule "UBUNTU22-CIS-Audit"]
+	path = UBUNTU22-CIS-Audit
+	url = https://github.com/tarunkrishnat0/UBUNTU22-CIS-Audit.git
+	branch = benchmark-v2.0.0
+[submodule "ansible-cis-ubuntu-2204"]
+	path = ansible-cis-ubuntu-2204
+	url = https://github.com/tarunkrishnat0/ansible-cis-ubuntu-2204.git
+	branch = main
