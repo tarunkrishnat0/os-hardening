@@ -24,6 +24,7 @@ ssh-keygen -t ed25519 -a 200 -C "${USER}@${machine_id}" -f ~/.ssh/id_ed25519
 ```
 
 # [TargetSystem] Step 2: Configure all TargetSystems (Systems to be hardened)
+For each of the target systems, execute below sub-sections.
 ## [TargetSystem] Get Username and IP Address
 
 Get the username, IP address for all target systems and update in `hosts` section in [inventory.yml](#update-inventoryyml)
