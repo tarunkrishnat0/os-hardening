@@ -55,12 +55,20 @@ machine_id=$(cat /etc/machine-id)
 ssh-keygen -t ed25519 -a 200 -C "${USER}@${machine_id}" -f ~/.ssh/id_ed25519
 ```
 
-Copy the ssh key to the target system
+Copy the ssh key to the target system.
+
+Note: `target-system-username` and `target-system-ip` are from section [Target System](#get-username-and-ip-address)
 ```sh
 ssh-copy-id target-system-username@target-system-ip
 
 # SSH into the target system shouldnt prompt for password
 ssh target-system-username@target-system-ip
+```
+
+SSH Public Key
+```sh
+# Copy the string from this command and replace ADD_SSH_PUBLIC_KEY_HERE in inventory.yml
+cat ~/.ssh/id_ed25519.pub
 ```
 
 # Hardening
@@ -83,7 +91,7 @@ all:
           ansible_connection: ssh
   vars:
     ansible_python_interpreter: /usr/bin/python3
-    ansible_ssh_key: ADD_SSH_KEY_HERE
+    ansible_ssh_key: ADD_SSH_PUBLIC_KEY_HERE
 
 ```
 

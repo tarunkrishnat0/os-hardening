@@ -12,4 +12,4 @@ all:
           ansible_connection: ssh
   vars:
     ansible_python_interpreter: /usr/bin/python3
-    ansible_ssh_key: ADD_UR_SSH_KEY_HERE
+    ansible_ssh_key: ADD_SSH_PUBLIC_KEY_HERE
