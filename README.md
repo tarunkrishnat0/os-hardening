@@ -15,7 +15,17 @@ sudo apt install -y python3-dev python3-venv python3-virtualenv python3-pip libf
 
 sudo add-apt-repository --yes --update ppa:ansible/ansible
 sudo apt install ansible
+
+# Configure language
+echo "LC_ALL=en_US.UTF-8" | sudo tee -a /etc/environment
+echo echo "en_US.UTF-8 UTF-8" | sudo tee -a /etc/locale.gen
+echo "LANG=en_US.UTF-8" | sudo tee /etc/locale.conf
+sudo apt-get clean
+sudo apt-get update -y
+sudo apt-get install locales -y
+sudo locale-gen en_US.UTF-8
 ```
+
 ### [LocalSystem] Generate SSH Keys
 Generate ssh keys if you dont have one already
 ```sh
@@ -107,13 +117,13 @@ cd os-hardening
 ansible all -m ping -i inventory.yml
 ```
 
-## Running hardening playbook
+## [LocalSystem] Running hardening playbook
 
 ```sh
 ansible-playbook -i inventory.yml playbook.yml --ask-become-pass -k
 ```
 
-## [Optional] Running Audit in the target system
+## [TargetSystem] [Optional] Running Audit in the target system
 ```sh
 # SSH into the system that you want to audit
 ssh user@ip
@@ -130,7 +140,7 @@ cd UBUNTU22-CIS-Audit
 sudo ./run_audit.sh -v vars/CIS.yml -w Workstation
 ```
 
-# Installing ClamAV
+# [TargetSystem] Installing ClamAV
 ```sh
 sudo apt-get install clamav clamav-daemon -y
 sudo systemctl stop clamav-freshclam
@@ -138,5 +148,5 @@ sudo freshclam
 sudo systemctl start clamav-freshclam
 ```
 
-# Setting FIDO key for FDE
+# [TargetSystem] Setting FIDO key for FDE
 Refer [fido2-luks.md](Post-Ubuntu-Install/fido2-luks.md)
